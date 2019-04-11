@@ -8,10 +8,10 @@
         <!-- 用户名称 -->
         <el-table-column prop="account" label="用户名称" width="300"></el-table-column>
         <!-- 用户组 -->
-        <el-table-column prop="userGroup" label="用户组" width="300"></el-table-column>
+        <el-table-column prop="user_group" label="用户组" width="300"></el-table-column>
         <!-- 账号创建日期 -->
         <el-table-column label="日期">
-          <template slot-scope="scope">{{ scope.row.createDate }}</template>
+          <template slot-scope="scope">{{ scope.row.create_date |filterDate }}</template>
         </el-table-column>
         <!-- 操作 -->
         <el-table-column label="操作">
@@ -43,21 +43,12 @@
 
 
 <script>
+// 引入moment
+import moment from 'moment';
 export default {
   data() {
     return {
-      tableData: [
-        {
-          account: "苏二狗",
-          userGroup: "超级管理员",
-          createDate: "2019-04-08"
-        },
-        {
-          account: "呵呵哒",
-          userGroup: "普通管理员",
-          createDate: "2019-04-08"
-        }
-      ],
+      tableData: [    ],
       currentPage: 1, //当前页
 
       total: 20 //总条数
@@ -68,8 +59,29 @@ export default {
     handleDelete() {},
     handleSizeChange() {},
     handleCurrentChange() {}
+  },
+  // 生命周期 钩子函数
+  created(){
+    // 请求账号数据
+    this.request.get('/account/accountlist')
+      .then(res=>{
+        console.log(res);
+        this.tableData=res;
+      })
+      .catch(err=>{
+        console.log(err);
+        
+      })
+  },
+  filters: {
+    // 过滤时间
+    filterDate (time) {
+      return moment(time).format('YYYY-MM-DD hh:mm:ss')
+    }
   }
-};
+}
+
+
 </script>
 
 <style>

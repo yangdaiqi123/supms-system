@@ -1,5 +1,5 @@
 <template>
-    <div class="botto">
+    <div class="bottom">
         &copy;Copyright2018 华联超市管理系统
     </div>
 </template>

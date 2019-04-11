@@ -16,7 +16,7 @@
             </div>
             <!-- 列表 -->
             <el-table :data="tableData" stripe style="width: 100%">
-              <el-table-column prop="TradeName" label="商品名称" width="180"></el-table-column>
+              <el-table-column prop="TradeName" label="商品名称" width="400"></el-table-column>
               <el-table-column prop="SalesVolume" label="销量"></el-table-column>
             </el-table>
           </el-card>

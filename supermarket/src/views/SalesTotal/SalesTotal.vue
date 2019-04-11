@@ -17,11 +17,11 @@
           <el-dropdown size="medium" split-button trigger="click" style="margin-left:10px">
             销售情况统计
             <el-dropdown-menu>
-              <el-dropdown-item>黄金糕</el-dropdown-item>
-              <el-dropdown-item>狮子头</el-dropdown-item>
-              <el-dropdown-item>螺蛳粉</el-dropdown-item>
-              <el-dropdown-item>双皮奶</el-dropdown-item>
-              <el-dropdown-item>蚵仔煎</el-dropdown-item>
+              <el-dropdown-item>10</el-dropdown-item>
+              <el-dropdown-item>20</el-dropdown-item>
+              <el-dropdown-item>30</el-dropdown-item>
+              <el-dropdown-item>40</el-dropdown-item>
+              <el-dropdown-item>50</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <el-button size="medium" type="success" style="margin-left:10px">查询</el-button>

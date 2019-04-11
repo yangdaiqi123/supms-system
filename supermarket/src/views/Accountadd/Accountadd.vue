@@ -10,7 +10,7 @@
         style="width:400px"
         status-icon
         :rules="rules"
-        size="small" 
+        size="small"
         ref="accountAddForm"
         label-width="100px"
         class="demo-ruleForm"
@@ -46,6 +46,8 @@
 <script>
 // 引入验证函数
 import { passwordReg } from "@/utils/validator";
+// 引入qs
+import qs from "qs";
 export default {
   data() {
     // 自定义密码验证函数
@@ -80,66 +82,82 @@ export default {
         account: "",
         password: "",
         checkPass: "",
-        userGroup:'',
+        userGroup: ""
       },
       // 验证规则
       rules: {
-       // 账号
-        account:[
-          {required:true,message:'请输入账号',trigger:'blur'},
-          {min:3,max:6,message:"账号长度在3-6位",trigger:'blur'}
+        // 账号
+        account: [
+          { required: true, message: "请输入账号", trigger: "blur" },
+          { min: 3, max: 6, message: "账号长度在3-6位", trigger: "blur" }
         ],
         // 密码
-        password:[
-          {required:true,validator:chickPassword,trigger:'blur'}
+        password: [
+          { required: true, validator: chickPassword, trigger: "blur" }
         ],
         // 确认密码
-        checkPass:[
-            {required:true,validator:confirmPassword,trigger:'blur'}
+        checkPass: [
+          { required: true, validator: confirmPassword, trigger: "blur" }
         ],
         // 用户组
-        userGroup:[
-          {required:true,message:"请选择用户组",trigger:"change"}
+        userGroup: [
+          { required: true, message: "请选择用户组", trigger: "change" }
         ]
       }
     };
   },
   methods: {
     // 添加账号
-    submitForm(){
-      this.$refs.accountAddForm.validate(valid=>{
+    submitForm() {
+      this.$refs.accountAddForm.validate(valid => {
         //如果所有的验证都通过
-        if(valid){
+        if (valid) {
           // 提交数据给后端
-          let params={
-            account:this.accountAddForm.account,
-            password:this.accountAddForm.password,
-            userGroup:this.accountAddForm.userGroup
-          }
-          alert('恭喜你添加成功')
-
-          // 路由跳转
-          this.$router.push('/home/accountmanage')
-        }else{
-          console.log("请重新添加");
-          return
-          
+          let params = {
+            account: this.accountAddForm.account,
+            password: this.accountAddForm.password,
+            userGroup: this.accountAddForm.userGroup
+          };
+          // 发送axios请求  把数据给后端
+          this.request
+            .post("/account/accountadd", params)
+            .then(res => {
+              // 获取后端返回来的数据
+              let { code, reason } = res;
+              // 判断
+              if (code === 0) {
+                //成功
+                this.$message({
+                  type: "success",
+                  message: reason
+                });
+                this.$router.push("/home/accountmanage");
+              } else if (code === 1) {
+                // 失败
+                this.$message.error(reason);
+              }
+            })
+            .cathch(err => {
+              console.log(err);
+            });
+        } else {
+          console.log("验证不通过，请重新添加");
+          return;
         }
-      })
-
+      });
     },
     // 重置
-    resetForm(){
-       this.$refs.accountAddForm.resetFields()
+    resetForm() {
+      this.$refs.accountAddForm.resetFields();
     }
   }
 };
 </script>
 
 <style lang="less">
-.el-card{
-  .el-form{
-    .el-form-item{
+.el-card {
+  .el-form {
+    .el-form-item {
       margin-bottom: 30px;
     }
   }
