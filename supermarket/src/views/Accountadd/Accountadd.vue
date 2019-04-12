@@ -119,8 +119,7 @@ export default {
             userGroup: this.accountAddForm.userGroup
           };
           // 发送axios请求  把数据给后端
-          this.request
-            .post("/account/accountadd", params)
+          this.request.post("/account/accountadd", params)
             .then(res => {
               // 获取后端返回来的数据
               let { code, reason } = res;
@@ -137,7 +136,7 @@ export default {
                 this.$message.error(reason);
               }
             })
-            .cathch(err => {
+            .catch(err => {
               console.log(err);
             });
         } else {

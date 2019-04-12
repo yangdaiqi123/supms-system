@@ -45,8 +45,8 @@
           <el-input v-model="ruleForm.PurchasePrice" style="width:200px"></el-input>元
         </el-form-item>
         <!-- 入库数量 -->
-        <el-form-item label="入库数量" prop="Warehousing">
-          <el-input v-model="ruleForm.Warehousing" style="width:200px"></el-input>
+        <el-form-item label="入库数量" prop="stock">
+          <el-input v-model="ruleForm.stock" style="width:200px"></el-input>
         </el-form-item>
         <!-- 商品重量 -->
         <el-form-item label="商品重量" prop="weight">
@@ -66,10 +66,6 @@
           <el-radio v-model="radio1" label="1">启用</el-radio>
           <el-radio v-model="radio1" label="2">禁用</el-radio>
         </el-form-item>
-        <!-- 商品简介 -->
-        <el-form-item label="商品简介">
-          <el-input type="textarea" style="width:400px"></el-input>
-        </el-form-item>
         <!-- 添加 -->
         <el-form-item>
           <el-button type="success" @click="onSubmit">添加</el-button>
@@ -81,6 +77,8 @@
       
 
 <script>
+// 引入qs
+import qs from "qs";
 export default {
   data() {
     return {
@@ -91,9 +89,9 @@ export default {
         classification: [
           { required: true, message: "-----选择分类-----", trigger: "change" }
         ],
-        barCode: [{ required: true }],
-        name: [{ required: true }],
-        price: [{ required: true }]
+        barCode: [{ required: true, message: "商品条形码不能位空", trigger: "blur" }],
+        name: [{ required: true, message: "商品名称不能为空", trigger: "blur" }],
+        price: [{ required: true, message: "商品售价不能为空", trigger: "blur" }]
       },
       radio: "1",
       radio1: "1"
@@ -113,19 +111,37 @@ export default {
             price: this.ruleForm.price,
             MarketValue: this.ruleForm.MarketValue,
             PurchasePrice: this.ruleForm.PurchasePrice,
-            Warehousing: this.ruleForm.Warehousing,
+            stock: this.ruleForm.stock,
             weight: this.ruleForm.weight,
           };
-          alert("恭喜你添加成功");
-
-          // 路由跳转
-          this.$router.push("/home/GoodsManage");
+          // 发送请求  把数据给后端
+          this.request.post('/goods/goodsadd',params)
+          .then(res=>{
+            // 接受后端返回来的数据
+            let{code,reason}=res;
+            // 判断
+            if(code === 0){
+              // 成功
+              this.$message({
+                type:"success",
+                message:reason
+              });
+              this.$router.push('/home/goodsManage')
+            }else if(code === 1){
+              this.$message.error(reason)
+            }
+          })
+          .catch(err=>{
+            console.log(err);           
+          })
         } else {
           console.log("请重新添加");
           return;
         }
       });
     }
+
+
   }
 };
 </script>

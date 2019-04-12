@@ -32,20 +32,20 @@
       </el-row>
       <hr>
       <!-- 表单 -->
-      <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="barCode" label="商品条形码" width="130"></el-table-column>
+      <el-table ref="tableData" :data="tableData" stripe style="width: 100%">
+        <el-table-column prop="bar_code" label="商品条形码" width="130"></el-table-column>
         <el-table-column prop="name" label="商品名称" width="130"></el-table-column>
         <el-table-column prop="classification" label="所属分类" width="100"></el-table-column>
         <el-table-column prop="price" label="售价(元)" width="100"></el-table-column>
-        <el-table-column prop="Promotional" label="促销价(元)" width="100"></el-table-column>
+        <el-table-column prop="PurchasePrice" label="促销价(元)" width="100"></el-table-column>
         <el-table-column prop="MarketValue" label="市场价(元)" width="100"></el-table-column>
         <el-table-column prop="stock" label="库存" width="100"></el-table-column>
         <el-table-column prop="totalInventory" label="库存总额(元)" width="130"></el-table-column>
         <!-- 管理 -->
         <el-table-column label="管理">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" @click="handleEdit(scope.row.id)">修改</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,6 +64,8 @@
 </template>
 
 <script>
+// 引入moment
+import moment from "moment";
 export default {
   data() {
     return {
@@ -71,69 +73,33 @@ export default {
         classification: ""
       },
       rules: {},
-      tableData: [
-        {
-          barCode: "691999520547",
-          name: "你的霸王防脱",
-          classification: "家用类",
-          price: 100,
-          Promotional: 80,
-          MarketValue: 100,
-          stock: 20,
-          totalInventory: 2000
-        },
-        {
-          barCode: "691999520547",
-          name: "她的德芙",
-          classification: "家用类",
-          price: 100,
-          Promotional: 80,
-          MarketValue: 100,
-          stock: 20,
-          totalInventory: 2000
-        },
-        {
-          barCode: "691999520547",
-          name: "我们的爽歪歪",
-          classification: "家用类",
-          price: 100,
-          Promotional: 80,
-          MarketValue: 100,
-          stock: 20,
-          totalInventory: 2000
-        },
-        {
-          barCode: "691999520547",
-          name: "你的阿道夫",
-          classification: "家用类",
-          price: 100,
-          Promotional: 80,
-          MarketValue: 100,
-          stock: 20,
-          totalInventory: 2000
-        }
-      ],
+      tableData: [],
       currentPage: 1, //当前页
       total: 20 //总条数
     };
   },
   methods: {
-      
+
     //修改
-    handleEdit() {
-
-    },
+    handleEdit() {},
     // 删除
-    handleDelete() {
-
-    },
+    handleDelete() {},
     // 分页
-    handleSizeChange(){
+    handleSizeChange() {},
+    handleCurrentChange() {}
+  },
 
-    },
-    handleCurrentChange(){
-
-    }
+  // 生命周期   钩子函数
+  created() {
+    // 请求账号数据
+    this.request
+      .get("/goods/goodslist")
+      .then(res => {
+        this.tableData = res;
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 };
 </script>
