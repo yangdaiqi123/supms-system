@@ -14,9 +14,10 @@ router.all('*',(req,res,next)=>{
 router.post('/goodsadd',(req,res)=>{
 	// 接受前端传过来的数据
 	let{classification,barCode,name,price,MarketValue,PurchasePrice,stock}=req.body;
+	let totalInventory=price*stock;
 	// 写sql
-	const sqlStr = `insert into goods(classification,bar_code,name,price,MarketValue,PurchasePrice,stock) values('${classification}','${barCode}','${name}','${price}','${MarketValue}','${PurchasePrice}','${stock}')`;
-	console.log(sqlStr)
+	const sqlStr = `insert into goods(classification,bar_code,name,price,MarketValue,PurchasePrice,stock,totalInventory) values('${classification}','${barCode}','${name}','${price}','${MarketValue}','${PurchasePrice}','${stock}','${totalInventory}')`;
+	// console.log(sqlStr)
 	// 执行sql
 	connection.query(sqlStr,(err,data)=>{
 		if(err) throw err;
@@ -130,9 +131,19 @@ router.get('/batchdelet',(req,res)=>{
 // 商品分页
 router.get('/goodslistpage',(req,res)=>{
 	 // 接受参数
-    let{currentPage,pageSize}=req.query;
+    let{currentPage,pageSize,keyword,classification}=req.query;
+
     // 写sql
-    let sqlStr = `select * from goods order by id desc`;
+    let sqlStr = `select * from goods where 1=1`;
+    //拼接查询条件
+	if (classification !== '全部' && classification !== '') {
+			sqlStr +=` and classification='${classification}'`;
+		}
+
+	if (keyword !== '') {
+		sqlStr += ` and(name like '%${keyword}%' or bar_code like '%${keyword}%')`
+	}
+	console.log(sqlStr)
 
     connection.query(sqlStr, (err, data) => {
         if (err) throw err;
@@ -149,6 +160,26 @@ router.get('/goodslistpage',(req,res)=>{
         })
     })
 })
+
+
+// // 查询
+// router.get('/search',(req,res)=>{
+// 	// 接受前端传过来的数据
+// 	let{keyword,cateName}=req.query;
+// 	// 写sql
+// 		let sqlStr = `select * from goods where 1=1`;
+// 		if (cateName !== '全部' && cateName !== '') {
+// 			sqlStr += ` and cateName='${cateName}'`;
+// 		}
+// 		if (keyword !== '') {
+// 			sqlStr += ` and(goodsName like '%${keyword}%' or barCode like '%${keyword}%')`
+// 		};
+// 		//执行sql
+// 		connection.query(sqlStr,(err, data) => {
+// 			if (err) throw err;
+// 			res.send(data);
+// 		})
+// })
 
 
 module.exports = router;

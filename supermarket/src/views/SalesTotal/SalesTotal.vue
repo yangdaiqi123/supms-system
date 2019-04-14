@@ -27,12 +27,62 @@
           <el-button size="medium" type="success" style="margin-left:10px">查询</el-button>
         </el-col>
       </el-row>
+      <!-- echarts -->
+      <div id="box" style="height:400px">
+
+      </div>
     </el-card>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  mounted(){
+    var res={
+      catedata:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+      value:[100,500,1000,5200,3000,100,5000,7000,900,430,100,540]
+    }
+    let {catedata, value} = res;
+
+    this.salescharts(catedata, value);
+
+  },
+  methods:{
+    salescharts(catedata=[],value=[]){
+      // dom初始化
+      let myChart=this.echarts.init(document.getElementById('box'))
+      let option={
+         tooltip: {
+                show: true
+            },
+            legend: {
+                data:['销量']
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    data : catedata
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    "name":"销量",
+                    "type":"line",
+                    "data":value
+                }
+            ]
+      }
+      // 生成报表
+      myChart.setOption(option)
+    }
+
+  }
+};
 </script>
 
 <style>

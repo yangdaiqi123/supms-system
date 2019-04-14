@@ -29,7 +29,7 @@
         </el-form-item>
       </el-form>
       <!-- 修改 -->
-      <el-button type="success" style="margin-left:100px">修改</el-button>
+      <el-button type="success" style="margin-left:100px" @click="submitForm()">修改</el-button>
     </el-card>
   </div>
 </template>
@@ -37,33 +37,53 @@
 <script>
 // 引入验证函数
 import { passwordReg } from "@/utils/validator";
+import local from '@/utils/local'
 export default {
   data() {
+    // 旧密码验证
+    const chickOldPassword=(rule,value,callback)=>{
+      // 发送请求给后端
+      this.request.post('/account/passwordmodify',{oldPassword:value})
+      .then(res=>{
+        // 接受后端发出来的请求
+        let{code,reason}=res;
+        if(code ===0){
+          callback();
+        }else if(code === 1){
+          callback(new Error(reason))
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+        
+      })
+    };
+    // 验证新密码
+
     // 自定义密码验证函数
     const chickPassword = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("密码不能为空"));
-      } else if (!passwordReg(value)) {
-        callback(
-          new Error("以字母开头，长度在3~6之间，只能包含字符、数字和下划线")
-        ); //错误提示
-      } else {
-        if (this.PasswordModify.checkPass !== "") {
-          this.$refs.PasswordModify.validateField("checkPass");
-        }
-        callback();
-      }
+       if (value === '') {
+                callback(new Error('请输入新密码'))
+            } else if (!passwordReg(value)) {
+                callback(new Error('字母开头，3~6位，只能有字符、数字、下划线'))
+            } else {
+                if (this.PasswordModify.checkPass !== '') {
+                    this.$refs.PasswordModify.validateField('checkPass')
+                }
+                callback()
+            }
+    
     };
     // 确认密码自定义函数
     const confirmPassword = (rule, value, callback) => {
-      if (value === "") {
-        //非空验证
-        callback(new Error("密码不能为空"));
-      } else if (value !== this.PasswordModify.newPassword) {
-        callback(new Error("两次密码不一致"));
-      } else {
-        callback(); //成功
-      }
+       if (value === '') {
+                callback(new Error('请输入确认新密码'))
+            } else if (value !== this.PasswordModify.newPassword) {
+                callback(new Error('两次密码不一致'))
+            } else {
+                callback()
+            }
+     
     };
     return {
       // 表单数据
@@ -76,8 +96,8 @@ export default {
       rules: {
        // 原密码
         oldPassword:[
-          {required:true,message:'请输入密码',trigger:'blur'},
-          {min:3,max:6,message:"账号是原密码",trigger:'blur'}
+          {required:true,validator:chickOldPassword,trigger:'blur'},
+       
         ],
         // 密码
         newPassword:[
@@ -91,27 +111,41 @@ export default {
     };
   },
   methods: {
-    // 添加账号
+    // 修改密码
     submitForm(){
       this.$refs.PasswordModify.validate(valid=>{
-        //如果所有的验证都通过
         if(valid){
-          // 提交数据给后端
-          let params={        
-            password:this.PasswordModify.password,
-          }
-          alert('恭喜你修改成功')
+          let params={
+            newPassword: this.PasswordModify.newPassword}
 
-          // 路由跳转
-          this.$router.push('/home/accountmanage')
-        }else{
-          console.log("请重新修改");
-          return
-          
+          // 发送请求给后端
+          this.request.post('/account/savenewpassword',params)
+          .then(res=>{
+            // 接受后端发过来的数据
+            let{code,reason}=res;
+            if(code === 0){
+              this.$message({
+                type:"success",
+                message:reason
+              })
+              // 删除token
+              local.remove('s_t_t_w_h_n666')
+              // 跳转到登陆页面
+              this.$router.push('/login')
+            }else if (code===1){
+              this.$message.error(reason)
+            }
+          })
+          .catch(err=>{
+            console.log(err);
+            
+          })
         }
       })
 
-    },
+    }
+
+   
   }
 };
 </script>

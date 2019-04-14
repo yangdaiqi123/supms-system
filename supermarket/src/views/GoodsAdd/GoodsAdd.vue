@@ -38,7 +38,6 @@
         <!-- 市场价 -->
         <el-form-item label="市场价" prop="MarketValue">
           <el-input v-model="ruleForm.MarketValue" style="width:200px"></el-input>元
-          <P>默认市场价为售价的1.2倍</P>
         </el-form-item>
         <!-- 商品进价 -->
         <el-form-item label="商品进价" prop="PurchasePrice">
@@ -46,7 +45,7 @@
         </el-form-item>
         <!-- 入库数量 -->
         <el-form-item label="入库数量" prop="stock">
-          <el-input v-model="ruleForm.stock" style="width:200px"></el-input>
+          <el-input v-model="ruleForm.stock" style="width:100px"></el-input>
         </el-form-item>
         <!-- 商品重量 -->
         <el-form-item label="商品重量" prop="weight">
@@ -54,7 +53,13 @@
         </el-form-item>
         <!-- 商品单位 -->
         <el-form-item label="商品单位" prop="commodityUnit">
-          <el-input v-model="ruleForm.commodityUnit" style="width:200px"></el-input>
+         <el-select v-model="ruleForm.commodityUnit" placeholder="-----选择单位-----">
+            <el-option value="个"></el-option>
+            <el-option value="条"></el-option>
+            <el-option value="件"></el-option>
+            <el-option value="克"></el-option>
+            <el-option value="千克"></el-option>
+          </el-select>
         </el-form-item>
         <!-- 会员优惠 -->
         <el-form-item label="会员优惠" prop="commodityUnit">

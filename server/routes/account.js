@@ -150,4 +150,36 @@ router.get('/accountListPage',(req,res)=>{
     })
 })
 
+// 旧密码修改
+router.post('/passwordmodify',(req,res)=>{
+    // 接受前端发过来的密码
+    let{oldPassword}=req.body;
+    // 获取当前用户的密码
+    let{password}=req.user;
+    // 判断
+    if(oldPassword === password){
+        res.send({code:0,reason:"原密码输入正确"})
+    }else{
+        res.send({code:1,reason:"原密码输入错误，请检查"})
+    }
+})
+
+// 保存修改后的密码
+router.post('/savenewpassword',(req,res)=>{
+    // 接受前端发过来的数据
+    let{newPassword}=req.body;
+    let{id}=req.user;
+    // 写sql
+    const sqlStr = `update account set password='${newPassword}' where id=${id}`;
+    // 执行sql
+    connection.query(sqlStr,(err,data)=>{
+        if(err) throw err;
+        if(data.affectedRows>0){
+           res.send({code:0,reason:"修改密码成功"})
+        }else{
+            res.send({code:1,reason:"修改密码失败"})
+        }
+    })
+})
+
 module.exports = router;

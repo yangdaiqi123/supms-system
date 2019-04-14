@@ -7,6 +7,9 @@ import './assets/css/base.css';
 import local from '@/utils/local'
 // 引入request.js
 import request from './utils/request'
+// 引入echarts
+import echarts from 'echarts'
+Vue.prototype.echarts = echarts;
 // 挂载在原型上
 Vue.prototype.request=request;
 
@@ -16,6 +19,8 @@ Vue.use(ElementUI);
 router.beforeEach((to, from, next) => {
   // 获取浏览器中的token
   const token = local.get('s_t_t_w_h_n666'); 
+  // console.log(token);
+  
   // 如果有token 直接放行
   if (token) {
      // 放行

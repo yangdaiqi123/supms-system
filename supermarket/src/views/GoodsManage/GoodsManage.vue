@@ -4,50 +4,46 @@
       <div slot="header" class="clearfix">
         <h3>商品管理</h3>
       </div>
-      <el-row>
-        <el-col :span="6">
-          <!-- 所属分类 -->
-          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-            <el-form-item prop="classification">
-              <el-select v-model="ruleForm.classification" placeholder="-----选择分类-----">
-                <el-option value="酒水类"></el-option>
-                <el-option value="服装类"></el-option>
-                <el-option value="家居类"></el-option>
-                <el-option value="电子通讯类"></el-option>
-                <el-option value="家居类"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </el-col>
-        <el-col :span="18">
-          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-            <!-- 查询 -->
-            <el-form-item label="关键字" prop="query">
-              <el-input v-model="ruleForm.query" style="width:200px"></el-input>
-              <span>(商品名称，条形码)</span>
-              <el-button type="success" size="medium">查询</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+      <div>
+        <el-form size="mini" :inline="true" :model="searchForm" class="demo-form-inline">
+          <!-- 分类 -->
+          <el-form-item label="选择分类" prop="classification">
+            <el-select v-model="searchForm.classification" placeholder="请选择分类">
+              <el-option label="全部" value="全部"></el-option>
+              <el-option label="酒水类" value="酒水类"></el-option>
+              <el-option label="服装类" value="服装类"></el-option>
+              <el-option label="家居类" value="家居类"></el-option>
+              <el-option label="电子通讯类" value="电子通讯类"></el-option>
+              <el-option label="家居类" value="家居类"></el-option>
+            </el-select>
+          </el-form-item>
+          <!-- 关键字 -->
+          <el-form-item label="关键字">
+            <el-input v-model="searchForm.keyword" placeholder="商品名称或条形码"></el-input>
+          </el-form-item>
+          <!-- 查询按钮 -->
+          <el-form-item>
+            <el-button type="primary" @click="search">查询</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
       <hr>
       <!-- 表单 -->
       <el-table
-      ref="tableData"
-      :data="tableData"
-      tooltip-effect="dark"
-      style="width: 100%"
-      @selection-change="handleSelectionChange">
-      <el-table-column
-      type="selection"
-      width="55"></el-table-column>
+        ref="tableData"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="bar_code" label="商品条形码" width="130"></el-table-column>
         <el-table-column prop="name" label="商品名称" width="130"></el-table-column>
         <el-table-column prop="classification" label="所属分类" width="100"></el-table-column>
         <el-table-column prop="price" label="售价(元)" width="100"></el-table-column>
         <el-table-column prop="PurchasePrice" label="促销价(元)" width="100"></el-table-column>
         <el-table-column prop="MarketValue" label="市场价(元)" width="100"></el-table-column>
-        <el-table-column prop="stock" label="库存" width="100"></el-table-column>
+        <el-table-column prop="stock" label="库存" width="80"></el-table-column>
         <el-table-column prop="totalInventory" label="库存总额(元)" width="130"></el-table-column>
         <!-- 管理 -->
         <el-table-column label="管理">
@@ -94,10 +90,10 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       ></el-pagination>
-       <!-- 批量选择 -->
+      <!-- 批量选择 -->
       <div style="margin-top: 20px">
         <el-button type="danger" @click="batchdelet">批量删除</el-button>
-      <el-button type="success" @click="deselected">取消选择</el-button>
+        <el-button type="success" @click="deselected">取消选择</el-button>
       </div>
     </el-card>
   </div>
@@ -109,30 +105,29 @@ import moment from "moment";
 export default {
   data() {
     return {
-      ruleForm: {
+      searchForm: {
+        keyword: "",
         classification: ""
       },
       editForm: {
         name: "",
         classification: "",
-        price:  "",
+        price: ""
       },
-      
+
       rules: {
         // 模态框账号验证
         name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
         price: [{ required: true, message: "售价不能为空", trigger: "blur" }]
       },
 
-      tableData: [
- 
-      ],
+      tableData: [],
       currentPage: 1, //当前页
       pageSize: 3,
       total: 0, //总条数
       dialogFormVisible: false,
       editId: "",
-       selectedId: [],
+      selectedId: []
     };
   },
   methods: {
@@ -140,7 +135,9 @@ export default {
     goodslistpage() {
       let params = {
         currentPage: this.currentPage,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        keyword: this.searchForm.keyword,
+        classification: this.searchForm.classification
       };
       // 发送请求  把数据给后端
       this.request
@@ -190,12 +187,12 @@ export default {
           // 收集参数
           const params = {
             name: this.editForm.name,
-            price:this.editForm.price,
-            classification: this.editForm.classification,            
+            price: this.editForm.price,
+            classification: this.editForm.classification,
             editId: this.editId
           };
           console.log(params);
-          
+
           // 发请求给后端
           this.request
             .post("/goods/savegoods", params)
@@ -220,21 +217,20 @@ export default {
       });
     },
 
-     // 取消选择
+    // 取消选择
     deselected() {
       this.$refs.tableData.clearSelection();
     },
     handleSelectionChange(val) {
       this.selectedId = val.map(v => v.id);
     },
-     // 批量删除
+    // 批量删除
     batchdelet() {
-
       // 无选择给出错误提示
-      if(!this.selectedId.length){
+      if (!this.selectedId.length) {
         // 弹错误提示
         this.$message.error("请选择后，在进行删除");
-        return
+        return;
       }
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -258,7 +254,7 @@ export default {
                   message: reason
                 });
                 // 刷新列表
-               this.goodslistpage()
+                this.goodslistpage();
               } else if (code === 1) {
                 this.$message.error(reason);
               }
@@ -319,9 +315,12 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.goodslistpage();
+    },
+    // 查询
+    search() {
+      this.goodslistpage();
     }
   },
-
   // 生命周期   钩子函数
   created() {
     this.goodslistpage();
