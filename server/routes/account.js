@@ -7,7 +7,27 @@ connection=require('./js/conn')
 router.all('*',(req,res,next)=>{
     // 设置响应头解决跨域
     res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader("Access-Control-Allow-Headers", "authorization"); 
     next();
+})
+// 准备一个签名（秘钥）
+const secretKey = 'itsource';
+/* 验证token的合法性 */
+const expressJwt = require('express-jwt');
+
+// 验证token的合法性
+router.use(expressJwt ({
+    secret: secretKey
+}).unless({
+    path: ['/login/checklogin']  
+})); 
+// 路由拦截器
+router.use(function (err, req, res, next) {
+    // 如果前端没有token或者是错误的token 就会抛出如下错误
+    if (err.name === 'UnauthorizedError') { 
+        // 响应给前端token无效的信息
+        res.status(401).send('token不合法...');
+    }
 })
 
 //添加账号路由
@@ -32,7 +52,7 @@ router.post('/accountadd',(req,res)=>{
     })
     
 })
-// 请求账号路由
+// 请求账号列表路由
 router.get('/accountlist',(req,res)=>{
     // 写sql
     const sqlStr = `select * from account order by create_date desc`;
@@ -101,7 +121,7 @@ router.get('/batchdelet',(req,res)=>{
         if(data.affectedRows>0){
             res.send({code:0,reason:"批量删除成功"})
         }else{
-            res.send({code:0,reason:"批量删除失败"})
+            res.send({code:1,reason:"批量删除失败"})
         }
     })
 

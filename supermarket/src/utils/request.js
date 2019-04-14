@@ -2,10 +2,19 @@
 import axios from 'axios';
 // 引入qs
 import qs from 'qs'
+import local from '@/utils/local'
 
 
 // 设置服务器根目录
 axios.defaults.baseURL='http://127.0.0.1:777';
+
+// axios请求拦截器
+axios.interceptors.request.use(config => {
+    // 获取token
+    const token = local.get('s_t_t_w_h_n666');
+    config.headers.authorization = `Bearer ${token}` 
+    return config;
+})
 // 导出请求对象
 export default{
     //get方式
