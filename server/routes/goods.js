@@ -109,7 +109,7 @@ router.post('/savegoods',(req,res)=>{
 	 })
 })
 // 批量删除
-// 批量删除
+
 router.get('/batchdelet',(req,res)=>{
     // 接受前端发过来的id
     let {idArr}=req.query;
