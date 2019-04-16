@@ -143,7 +143,6 @@ router.get('/goodslistpage',(req,res)=>{
 	if (keyword !== '') {
 		sqlStr += ` and(name like '%${keyword}%' or bar_code like '%${keyword}%')`
 	}
-	console.log(sqlStr)
 
     connection.query(sqlStr, (err, data) => {
         if (err) throw err;
@@ -165,11 +164,11 @@ router.get('/goodslistpage',(req,res)=>{
 // // 查询
 // router.get('/search',(req,res)=>{
 // 	// 接受前端传过来的数据
-// 	let{keyword,cateName}=req.query;
+// 	let{keyword,classification}=req.query;
 // 	// 写sql
 // 		let sqlStr = `select * from goods where 1=1`;
-// 		if (cateName !== '全部' && cateName !== '') {
-// 			sqlStr += ` and cateName='${cateName}'`;
+// 		if (classification !== '全部' && classification !== '') {
+// 			sqlStr += ` and classification='${classification}'`;
 // 		}
 // 		if (keyword !== '') {
 // 			sqlStr += ` and(goodsName like '%${keyword}%' or barCode like '%${keyword}%')`

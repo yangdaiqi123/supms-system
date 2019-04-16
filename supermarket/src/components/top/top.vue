@@ -41,7 +41,7 @@ export default {
   methods: {
     handleCommand(command) {
       if (command === "personal") {
-        console.log("点击个人中心");
+       this.$router.push('/home/personal')
       } else if (command === "logout") {
         // 清楚token
         local.remove("s_t_t_w_h_n666");

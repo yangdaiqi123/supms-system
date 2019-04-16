@@ -181,5 +181,58 @@ router.post('/savenewpassword',(req,res)=>{
         }
     })
 })
+// 个人信息
+router.get('/accountinfo',(req,res)=>{
+    const id=req.user.id;
+    const sqlStr = `select * from account where id=${id}`;
+    connection.query(sqlStr,(err,data)=>{
+        if(err) throw err;
+        res.send(data)
+    })
+})
+
+// 头像上传
+// 引入multer
+const multer = require('multer')
+
+// 配置上传到服务器放置的目录 和 重命名
+const storage = multer.diskStorage({
+    destination: 'public/upload', // 图片上传到服务器的这个目录
+      // 图片重命名
+    filename (req, file, cb) {
+        var fileFormat =(file.originalname).split("."); // haha.jpg => ['haha', 'jpg']
+        // 获取时间戳
+        var filename = new Date().getTime();  
+        // 124354654 + "." + jpg
+        cb(null, filename + "." + fileFormat[fileFormat.length - 1]);
+    }
+})
+
+// 上传对象
+const upload = multer({
+    storage,
+});
+
+
+
+/* 头像上传请求 */ 
+router.post('/upload', upload.single('file'), (req, res) => {
+    // 获取文件名
+    let filename = req.file.filename;
+    // 拼接路径
+    let path = `/upload/${filename}`;
+
+    // 构造sql
+    const sqlStr = `update account set imgUrl='${path}' where id=${req.user.id}`;
+    // 执行sql
+    connection.query(sqlStr, (err, data) => {
+        if (err) throw err;
+        if (data.affectedRows > 0) {
+            res.send({code: 0, reason: "头像修改成功!", path})
+        } else {
+            res.send({code: 1, reason: "头像修改失败"})
+        }
+    })
+})
 
 module.exports = router;

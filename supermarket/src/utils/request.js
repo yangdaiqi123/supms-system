@@ -6,7 +6,7 @@ import local from '@/utils/local'
 
 
 // 设置服务器根目录
-axios.defaults.baseURL='http://127.0.0.1:777';
+axios.defaults.baseURL='http://172.16.11.208:777';
 
 // axios请求拦截器
 axios.interceptors.request.use(config => {
